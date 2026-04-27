@@ -1,0 +1,112 @@
+type Query {
+  order(id: ID!): Order
+  orders: [Order]
+  ordersByCustomer(name: String!): [Order]
+
+  ordersByDateRange(start: String!, end: String!): [Order]
+
+  topCustomers(limit: Int!): [CustomerOrderSummary]
+
+  ordersByProduct(productId: ID!): [Order]
+
+  productStats: [ProductStats]
+
+  ordersPagedSorted(offset: Int!, limit: Int!, sortBy: OrderSortField!): OrderPage
+
+  searchOrders(keyword: String!): [Order]
+
+  ordersByProductName(name: String!): [Order]
+
+  products: [Product]
+}
+
+type Mutation {
+
+  # CREATE
+  createProduct(input: ProductInput!): Product
+  createOrder(input: OrderInput!): Order
+
+  # UPDATE
+  updateProduct(input: ProductInput!): Product
+  updateOrder(input: OrderInput!): Order
+
+  # DELETE
+  deleteProduct(id: ID!): Boolean
+  deleteOrder(id: ID!): Boolean
+}
+
+type Subscription {
+  orderCreated: Order
+}
+
+type Order {
+  id: ID
+  customerName: String
+  email: String
+  lineItems: [LineItem]
+  createdAt: String
+}
+
+type LineItem {
+  id: ID
+  qty: Int
+  product: Product
+}
+
+type Product {
+  id: ID
+  name: String
+}
+
+type ProductStats {
+  productName: String
+  usageCount: Int
+  customers: [CustomerUsage]
+}
+
+type CustomerOrderSummary {
+  customerName: String
+  totalOrders: Int
+}
+
+type CustomerUsage {
+  name: String
+  orderCount: Int
+}
+
+type OrderStats {
+  totalQty: Int
+  itemCount: Int
+}
+
+enum OrderSortField {
+  id
+  customerName
+  email
+  createdAt
+}
+type OrderPage {
+  content: [Order]
+  page: Int
+  size: Int
+  totalElements: Int
+  totalPages: Int
+}
+
+input ProductInput {
+  id: ID
+  name: String!
+}
+
+input LineItemInput {
+  id: ID
+  productId: ID!
+  qty: Int!
+}
+
+input OrderInput {
+  id: ID!
+  customerName: String!
+  email: String!
+  items: [LineItemInput!]!
+}
